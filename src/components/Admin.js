@@ -2,16 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import firebase from '../Firebase'
 import { ref } from '../App'
+import * as s from '../styles/global.style'
 
-const Admin = () => {
+const Admin = ({handleModal}) => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [logged, setLogged] = useState(false)
   const [data, setData] = useState([])
   const [loaded, setLoaded] = useState(false)
   const [address, setAddress] = useState('')
-  const [success, setSuccess] = useState('')
-  const [error, setError] = useState('')
 
   useEffect(() => {
     setLoaded(true)
@@ -25,8 +24,7 @@ const Admin = () => {
         setLogged(true)
         getData()
       })
-      .catch((error) => console.log('Error: Unable to log')
-      )
+      .catch((error) => console.log('Error: Unable to log'))
   }
 
   const getData = () => {
@@ -55,47 +53,59 @@ const Admin = () => {
       .doc(obj.id)
       .set(obj)
       .then((result) => {
-        setSuccess('Success: added to the whitelist')
-        setError('')
+        handleModal('Success:', 'added to the whitelist')
       })
       .catch((error) => {
-        setSuccess('')
-        setError('Error: Enable to add the address')
+        handleModal('Error:', 'Enable to add the address')
       })
   }
 
   return (
-    <div>
+    <s.Container ai="center">
       {!logged ? (
         <>
-          Se logger à l'interface d'administration
-          <input type="email" onChange={(e) => setEmail(e.target.value)} />
-          <input
+          <s.TextSubTitle>
+            Se logger à l'interface d'administration
+          </s.TextSubTitle>
+          <s.Input
+            placeholder="email"
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <s.Input
+            placeholder="password"
             type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button onClick={loggin}>Connexion</button>
+          <s.Button onClick={loggin}>Connexion</s.Button>
         </>
       ) : (
         <>
-          {error && <p className="alert error">{error}</p>}
-          {success && <p className="alert success">{success}</p>}
-          Listing of accounts in the whitelist
+          <s.TextSubTitle>Listing of accounts in the whitelist</s.TextSubTitle>
           {loaded &&
             data.map((element) => (
               <li key={element.id}>
-                {element.address} - {element.balance} -{' '}
-                <button value={element.id} onClick={deleteAddress}>
-                  Delete Address
-                </button>
+                <s.Container fd="row" ai="center">
+                  <s.TextDescription>
+                    {element.address} - {element.balance} ETH
+                  </s.TextDescription>
+                  <s.Button
+                    style={{ marginLeft: 10 }}
+                    value={element.id}
+                    onClick={deleteAddress}
+                  >
+                    Delete Address
+                  </s.Button>
+                </s.Container>
               </li>
             ))}
-          Add an address to the whitelist
-          <input type="text" onChange={(e) => setAddress(e.target.value)} />
-          <button onClick={addOnWhitelist}>Add to the Whitelist</button>
+          <s.SpacerLarge />
+          <s.TextSubTitle>Add an address to the whitelist</s.TextSubTitle>
+          <s.Input placeholder='Address' type="text" onChange={(e) => setAddress(e.target.value)} />
+          <s.Button onClick={addOnWhitelist}>Add to the Whitelist</s.Button>
         </>
       )}
-    </div>
+    </s.Container>
   )
 }
 
