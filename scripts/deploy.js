@@ -12,7 +12,7 @@ async function main() {
   const root = tree.getHexRoot()
 
   const Raffle = await hre.ethers.getContractFactory("ERC721Merkle");
-  const raffle = await Raffle.deploy("CD33", "CDD", root);
+  const raffle = await Raffle.deploy(root);
 
   await raffle.deployed();
 
